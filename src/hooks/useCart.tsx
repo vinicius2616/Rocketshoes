@@ -67,7 +67,11 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     amount,
   }: UpdateProductAmount) => {
     try {
-      console.log(productId, amount)
+      if (amount <= 0) return
+
+      const responseApi = await api.get(`/stock/${productId}`)
+      const responseData: Stock = responseApi.data
+      console.log(responseData)
 
     } catch {
       // TODO
