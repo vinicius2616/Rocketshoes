@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   MdDelete,
   MdAddCircleOutline,
@@ -19,9 +20,11 @@ interface Product {
 const Cart = (): JSX.Element => {
   const { cart, removeProduct, updateProductAmount } = useCart();
 
-  // const cartFormatted = cart.map(product => ({
-  //   // TODO
-  // }))
+  const cartFormatted = cart.map(product => ({
+    ...product, 
+    priceFormatted: formatPrice(product.price)
+
+  }))
   // const total =
   //   formatPrice(
   //     cart.reduce((sumTotal, product) => {
@@ -30,7 +33,11 @@ const Cart = (): JSX.Element => {
   //   )
 
   function handleProductIncrement(product: Product) {
-    // TODO
+   updateProductAmount({
+    productId: product.id,
+    amount: product.amount
+   })
+   
   }
 
   function handleProductDecrement(product: Product) {
@@ -43,7 +50,7 @@ const Cart = (): JSX.Element => {
 
   return (
     <Container>
-      {cart.map((product) => (
+      {cartFormatted.map((product) => (
         <ProductTable>
           <thead>
             <tr>
@@ -58,13 +65,13 @@ const Cart = (): JSX.Element => {
             <tr data-testid="product">
               <td>
                 <img
-                  src="https://rocketseat-cdn.s3-sa-east-1.amazonaws.com/modulo-redux/tenis1.jpg"
-                  alt="Tênis de Caminhada Leve Confortável"
+                  src={product.image}
+                  alt={product.title}
                 />
               </td>
               <td>
-                <strong>Tênis de Caminhada Leve Confortável</strong>
-                <span>R$ 179,90</span>
+                <strong>{product.title}</strong>
+                <span>{product.priceFormatted}</span>
               </td>
               <td>
                 <div>
@@ -80,12 +87,12 @@ const Cart = (): JSX.Element => {
                     type="text"
                     data-testid="product-amount"
                     readOnly
-                    value={2}
+                    value={product.amount}
                   />
                   <button
                     type="button"
                     data-testid="increment-product"
-                    // onClick={() => handleProductIncrement()}
+                    onClick={() => handleProductIncrement(product)}
                   >
                     <MdAddCircleOutline size={20} />
                   </button>

@@ -38,10 +38,11 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
       const newCart = [...cart, data];
       setCart([...newCart]);
+      
       localStorage.setItem('@RocketShoes:cart', JSON.stringify(newCart));
-      console.log(newCart);
+
     } catch {
-      // TODO
+      toast.error('Erro na adição do produto');
     }
   };
 
@@ -66,6 +67,8 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     amount,
   }: UpdateProductAmount) => {
     try {
+      console.log(productId, amount)
+
     } catch {
       // TODO
     }
