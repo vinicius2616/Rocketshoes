@@ -35,6 +35,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
   const addProduct = async (productId: number) => {
     try {
       const { data } = await api.get(`products/${productId}`);
+
       const newCart = [...cart, data];
       setCart([...newCart]);
       localStorage.setItem('@RocketShoes:cart', JSON.stringify(newCart));
@@ -49,10 +50,14 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       const filteredProduct = cart.filter(
         (product) => product.id !== productId
       );
-      console.log(filteredProduct);
       setCart([...filteredProduct]);
+
+      localStorage.setItem(
+        '@RocketShoes:cart',
+        JSON.stringify(filteredProduct)
+      );
     } catch {
-      // TODO
+      toast.error('Erro na remoção do produto');
     }
   };
 
