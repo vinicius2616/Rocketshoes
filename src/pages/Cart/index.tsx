@@ -24,6 +24,8 @@ const Cart = (): JSX.Element => {
     ...product,
     priceFormatted: formatPrice(product.price),
   }));
+
+
   // const total =
   //   formatPrice(
   //     cart.reduce((sumTotal, product) => {
@@ -37,6 +39,7 @@ const Cart = (): JSX.Element => {
     });
   }
 
+
   function handleProductDecrement(product: Product) {
     // TODO
   }
@@ -48,7 +51,7 @@ const Cart = (): JSX.Element => {
   return (
     <Container>
       {cartFormatted.map((product) => (
-        <ProductTable>
+        <ProductTable key={product.id} > 
           <thead>
             <tr>
               <th aria-label="product image" />
