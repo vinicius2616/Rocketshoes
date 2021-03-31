@@ -37,7 +37,11 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       const responseApi = await api.get(`products/${productId}`);
       const responseData: Product = responseApi.data;
 
-      if (responseData.amount < 1) {
+      const responseApiStock = await api.get(`/stock/${productId}`);
+      const reponseStock: Stock = responseApiStock.data;
+      console.log(reponseStock)
+
+      if (reponseStock.amount < 1) {
         toast.error('Quantidade solicitada fora de estoque');
         return;
       }
@@ -51,9 +55,20 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
           const newCart = [...cart, responseData]
           setCart(newCart)
           localStorage.setItem('@RocketShoes:cart', JSON.stringify(newCart));
-        } 
-      }else {
-        console.log('entrei')
+        }
+      } else {
+        if (responseData.id === productId) {
+          if (reponseStock.amount <= cart[index].amount) {
+            toast.error('Quantidade solicitada fora de estoque')
+            return
+          }
+          const newCart = cart
+
+          newCart[index].amount += 1
+
+          setCart([...newCart])
+          localStorage.setItem('@RocketShoes:cart', JSON.stringify(newCart));
+        }
       }
 
       // const index = cart.findIndex((item) => item.id == productId);
