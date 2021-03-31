@@ -42,12 +42,18 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
         return;
       }
 
-      if (responseData.id == productId) {
-        responseData.amount = 1
+      const index = cart.findIndex((product) => product.id === productId)
 
-        const newCart = [...cart, responseData]
-        setCart(newCart)
-        localStorage.setItem('@RocketShoes:cart', JSON.stringify(newCart));
+      if (index < 0) {
+        if (responseData.id === productId) {
+          responseData.amount = 1
+
+          const newCart = [...cart, responseData]
+          setCart(newCart)
+          localStorage.setItem('@RocketShoes:cart', JSON.stringify(newCart));
+        } 
+      }else {
+        console.log('entrei')
       }
 
       // const index = cart.findIndex((item) => item.id == productId);
@@ -98,13 +104,13 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
       const responseApi = await api.get(`/stock/${productId}`);
       const responseData: Stock = responseApi.data;
-      
-      if(responseData.amount < amount){
+
+      if (responseData.amount < amount) {
         toast.error('Quantidade solicitada fora de estoque');
         return
-      } 
+      }
       const index = cart.findIndex((item) => item.id === productId);
-      
+
       cart[index].amount = amount
 
       const newCart = [...cart]
