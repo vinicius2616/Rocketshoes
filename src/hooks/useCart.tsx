@@ -34,8 +34,6 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   const addProduct = async (productId: number) => {
     try {
-      const responseApi = await api.get(`products/${productId}`);
-      const responseData: Product = responseApi.data;
 
       const responseApiStock = await api.get(`/stock/${productId}`);
       const reponseStock: Stock = responseApiStock.data;
@@ -47,7 +45,23 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
       const index = cart.findIndex((product) => product.id === productId)
 
-      if (index < 0) {
+      if (index >= 0) {
+        const newAmount = cart[index].amount + 1
+
+        if (reponseStock.amount < newAmount) {
+          toast.error('Quantidade solicitada fora de estoque')
+          return
+        }
+
+        const newCart = cart
+        newCart[index].amount += 1
+
+        setCart([...newCart])
+        localStorage.setItem('@RocketShoes:cart', JSON.stringify(newCart));
+      } else {
+        const responseApi = await api.get(`products/${productId}`);
+        const responseData: Product = responseApi.data;
+
         if (responseData.id === productId) {
           responseData.amount = 1
 
@@ -55,22 +69,11 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
           setCart(newCart)
           localStorage.setItem('@RocketShoes:cart', JSON.stringify(newCart));
         }
-      } else {
-        if (responseData.id === productId) {
-          const newCart = cart
-          newCart[index].amount += 1
-
-          if (reponseStock.amount <= cart[index].amount) {
-            toast.error('Quantidade solicitada fora de estoque')
-            return
-          }          
-
-          setCart([...newCart])
-          localStorage.setItem('@RocketShoes:cart', JSON.stringify(newCart));
-        }
       }
 
       toast.success('Produto adicionado ao carrinho');
+
+
 
     } catch {
       toast.error('Erro na adição do produto');
@@ -79,6 +82,13 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   const removeProduct = (productId: number) => {
     try {
+      const index = cart.findIndex((p) => p.id === productId);
+
+      if (index < 0) {
+        toast.error('Erro na remoção do produto');
+        return;
+      }
+
       const filteredProduct = cart.filter(
         (product) => product.id !== productId
       );
